@@ -14,11 +14,11 @@
     )
 
     (:action assignarReserva
-    :parameters (?h - habitacio ?r - reserva ?p - peticio)
-    :precondition (and (not(servida ?p)) (disponible ?h) 
-                        ()
-                    )
-    :effect (and 
-                    )
+        :parameters (?h - habitacio ?r - reserva ?p - peticio)
+        :precondition (and (not(servida ?p)) (disponible ?h) 
+                            ()
+                        )
+        :effect (and 
+                        )
     )
 )
