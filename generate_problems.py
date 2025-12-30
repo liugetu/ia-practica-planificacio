@@ -38,13 +38,17 @@ def generate_problem_text(inst: Instance) -> str:
     rng = random.Random(inst.seed)
 
     level = inst.level.lower()
-    if level not in {"basic", "ext1", "ext3"}:
-        raise ValueError("level must be one of: basic, ext1, ext3")
+    # Accept both the historical names (ext3/ext4) and numeric shortcuts (3/4).
+    level = {"3": "ext3", "4": "ext4"}.get(level, level)
+
+    if level not in {"basic", "ext1", "ext3", "ext4"}:
+        raise ValueError("level must be one of: basic, ext1, ext3, ext4 (or 3/4)")
 
     domain = {
         "basic": "reserves-hotel-basic",
         "ext1": "reserves-hotel-ext1",
         "ext3": "reserves-hotel-ext3",
+        "ext4": "reserves-hotel-ext4",
     }[level]
 
     problem_name = f"reserves-hotel-{level}-auto-{inst.size}"
@@ -96,7 +100,7 @@ def generate_problem_text(inst: Instance) -> str:
 
     # Init.
     lines.append("  (:init")
-    if level in {"ext1", "ext3"}:
+    if level in {"ext1", "ext3", "ext4"}:
         lines.append("    (= (total-cost) 0)")
         lines.append("")
 
@@ -129,7 +133,7 @@ def generate_problem_text(inst: Instance) -> str:
     lines.append("    )")
     lines.append("  )")
 
-    if level in {"ext1", "ext3"}:
+    if level in {"ext1", "ext3", "ext4"}:
         lines.append("")
         lines.append("  (:metric minimize (total-cost))")
 
@@ -140,7 +144,7 @@ def generate_problem_text(inst: Instance) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate PDDL test problems for the hotel-reservations practice (basic/ext1/ext3)."
+        description="Generate PDDL test problems for the hotel-reservations practice (basic/ext1/ext3/ext4)."
     )
     parser.add_argument(
         "n",
@@ -155,7 +159,12 @@ def main() -> int:
         default=None,
         help="Number of reservations to generate (deprecated; prefer positional n)",
     )
-    parser.add_argument("--level", choices=["basic", "ext1", "ext3"], default="basic")
+    parser.add_argument(
+        "--level",
+        choices=["basic", "ext1", "ext3", "ext4", "3", "4"],
+        default="basic",
+        help="Domain level to target (you can also use numeric shortcuts 3/4)",
+    )
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--days", type=int, default=30, help="Number of days (default: 30)")
     parser.add_argument(
@@ -175,20 +184,28 @@ def main() -> int:
 
     size = args.size if args.size is not None else args.n
     if size is None:
-        raise SystemExit("Missing size. Usage: python generate_problems.py <n> [--level basic|ext1|ext3] ...")
+        raise SystemExit(
+            "Missing size. Usage: python generate_problems.py <n> [--level basic|ext1|ext3|ext4|3|4] ..."
+        )
     if args.size is not None and args.n is not None and args.size != args.n:
         raise SystemExit("Conflicting sizes: positional n differs from --size")
 
-    # Warn early if ext3 is requested but its domain file isn't in this folder.
-    if args.level == "ext3":
-        domain_ext3 = Path(__file__).with_name("domain-ext3.pddl")
-        if not domain_ext3.exists():
-            print(
-                "Warning: --level ext3 requested but domain-ext3.pddl was not found next to this script. ",
-                "The generated problem will still reference (:domain reserves-hotel-ext3), ",
-                "but planners will fail unless you provide the ext3 domain.",
-                sep="",
-            )
+    # Normalize level early (accept numeric shortcuts).
+    level = {"3": "ext3", "4": "ext4"}.get(args.level, args.level)
+
+    # Warn early if the corresponding domain file isn't present.
+    domain_file = {
+        "basic": "domain-basic.pddl",
+        "ext1": "domain-ext1.pddl",
+        "ext3": "domain-ext3.pddl",
+        "ext4": "domain-ext4.pddl",
+    }[level]
+    if not Path(__file__).with_name(domain_file).exists():
+        print(
+            f"Warning: {domain_file} was not found next to this script. ",
+            f"The generated problem will reference level '{level}', but planners will fail without the domain file.",
+            sep="",
+        )
 
     if size <= 0:
         raise SystemExit("--size must be > 0")
@@ -200,7 +217,7 @@ def main() -> int:
         rooms = max(2, math.ceil(size / 2))
 
     inst = Instance(
-        level=args.level,
+        level=level,
         size=size,
         days=args.days,
         rooms=rooms,
@@ -209,7 +226,7 @@ def main() -> int:
 
     text = generate_problem_text(inst)
 
-    out_name = args.out or f"problem-{args.level}-auto-{inst.size}.pddl"
+    out_name = args.out or f"problem-{level}-auto-{inst.size}.pddl"
     out_path = Path(__file__).with_name(out_name)
     out_path.write_text(text, encoding="utf-8")
 
