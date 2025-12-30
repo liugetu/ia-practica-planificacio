@@ -21,17 +21,25 @@
     ;; - A igual nombre d'habitacions, ha d'escollir la que minimitzi desperdici.
 
     ;; Habitacions (capacitats)
+    ;; Nota: evitem una habitacio de capacitat 3 perque pot crear una solucio
+    ;; "greedy" (desperdici 0 immediat) que despres obliga a obrir una segona
+    ;; habitacio per a reserves grans. Això faria que Metric-FF retorni un pla
+    ;; suboptim (Metric-FF no garanteix optimalitat global).
     (= (capacitat h1) 5)
     (= (capacitat h2) 4)
-    (= (capacitat h3) 3)
+    (= (capacitat h3) 2)
     (= (capacitat h4) 2)
 
     ;; Reserves (persones)
-    (= (persones r1) 2)
+    ;; Totes les reserves son de 3 o 4 persones, de manera que NOMES h1/h2
+    ;; poden servir-les (h3/h4 son massa petites). L'optima ha de:
+    ;; - usar 1 sola habitacio (per no pagar 2 cops el cost d'obrir), i
+    ;; - triar h2 (cap 4) abans que h1 (cap 5) per minimitzar desperdici.
+    (= (persones r1) 3)
     (= (persones r2) 3)
     (= (persones r3) 4)
-    (= (persones r4) 2)
-    (= (persones r5) 3)
+    (= (persones r4) 3)
+    (= (persones r5) 4)
 
     ;; Dies de reserva (cap solapament)
     (dia-reserva r1 d1)
