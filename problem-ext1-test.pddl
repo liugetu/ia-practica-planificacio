@@ -20,29 +20,36 @@
     (= (persones r1) 2)
     (= (persones r2) 3)
     (= (persones r3) 2)
-    (= (persones r4) 4)
+    ;; r4 es IMPOSIBLE: no hi ha cap habitacio amb capacitat >= 5.
+    ;; En un plan òptim (minimitzant total-cost) r4 s'ha de rebutjar.
+    (= (persones r4) 5)
     (= (persones r5) 2)
 
     ;; Configuración de días de reserva
-    ;; r1: días 1-2 (2 personas)
+    ;; Disseny del test:
+    ;; - r1, r3, r5 se solapen (força a respectar ocupacions), però hi ha prou habitacions.
+    ;; - r2 NO se solapa amb les altres (evitem bloquejos heurístics per eleccions dolentes).
+    ;; - r4 és impossible per capacitat i s'ha de rebutjar.
+
+    ;; r1: dies 1-2 (2 persones)
     (dia-reserva r1 d1)
     (dia-reserva r1 d2)
 
-    ;; r2: días 2-3 (3 personas)
-    (dia-reserva r2 d2)
-    (dia-reserva r2 d3)
+    ;; r2: dies 4-5 (3 persones) - no se solapa amb r1/r3/r5
+    (dia-reserva r2 d4)
+    (dia-reserva r2 d5)
 
-    ;; r3: días 1-3 (2 personas) - solapa con r1 y r2
+    ;; r3: dies 1-3 (2 persones) - se solapa amb r1 i r5
     (dia-reserva r3 d1)
     (dia-reserva r3 d2)
     (dia-reserva r3 d3)
 
-    ;; r4: días 3-5 (4 personas)
+    ;; r4: dies 2-4 (5 persones) - impossible per capacitat
+    (dia-reserva r4 d2)
     (dia-reserva r4 d3)
     (dia-reserva r4 d4)
-    (dia-reserva r4 d5)
 
-    ;; r5: días 1-2 (2 personas) - solapa con r1 y r3
+    ;; r5: dies 1-2 (2 persones) - se solapa amb r1 i r3
     (dia-reserva r5 d1)
     (dia-reserva r5 d2)
   )

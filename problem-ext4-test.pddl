@@ -10,41 +10,35 @@
   (:init
     (= (total-cost) 0)
 
-    ;; Habitaciones con diferentes capacidades
-    (= (capacitat h1) 2)
-    (= (capacitat h2) 3)
-    (= (capacitat h3) 4)
+    ;; TEST domini ext4 (prioritats):
+    ;; 1) rebutjar (molt car)  2) obrir habitacions  3) desperdici
+    ;;
+    ;; Disseny del test:
+    ;; - NO hi ha solapaments entre reserves -> totes es poden servir.
+    ;; - Hi ha una solucio amb desperdici 0 pero usa mes habitacions.
+    ;; - L'optima ha de preferir usar el MINIM nombre d'habitacions encara que
+    ;;   augmenti el desperdici.
+    ;; - A igual nombre d'habitacions, ha d'escollir la que minimitzi desperdici.
+
+    ;; Habitacions (capacitats)
+    (= (capacitat h1) 5)
+    (= (capacitat h2) 4)
+    (= (capacitat h3) 3)
     (= (capacitat h4) 2)
 
-    ;; Reservas con diferentes necesidades de personas
+    ;; Reserves (persones)
     (= (persones r1) 2)
     (= (persones r2) 3)
-    (= (persones r3) 2)
-    (= (persones r4) 4)
-    (= (persones r5) 2)
+    (= (persones r3) 4)
+    (= (persones r4) 2)
+    (= (persones r5) 3)
 
-    ;; Configuración de días de reserva
-    ;; r1: días 1-2 (2 personas)
+    ;; Dies de reserva (cap solapament)
     (dia-reserva r1 d1)
-    (dia-reserva r1 d2)
-
-    ;; r2: días 2-3 (3 personas)
     (dia-reserva r2 d2)
-    (dia-reserva r2 d3)
-
-    ;; r3: días 1-3 (2 personas) - solapa con r1 y r2
-    (dia-reserva r3 d1)
-    (dia-reserva r3 d2)
     (dia-reserva r3 d3)
-
-    ;; r4: días 3-5 (4 personas)
-    (dia-reserva r4 d3)
     (dia-reserva r4 d4)
-    (dia-reserva r4 d5)
-
-    ;; r5: días 1-2 (2 personas) - solapa con r1 y r3
-    (dia-reserva r5 d1)
-    (dia-reserva r5 d2)
+    (dia-reserva r5 d5)
   )
 
   (:goal

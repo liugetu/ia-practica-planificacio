@@ -10,41 +10,44 @@
   (:init
     (= (total-cost) 0)
 
-    ;; Habitaciones con diferentes capacidades
-    (= (capacitat h1) 2)
-    (= (capacitat h2) 3)
-    (= (capacitat h3) 4)
-    (= (capacitat h4) 2)
+    ;; TEST domini ext3 (desperdici):
+    ;; Volem comprovar que, si no cal rebutjar cap reserva, el planificador
+    ;; tria assignacions amb desperdici minim (capacitat - persones).
+    ;;
+    ;; Disseny: capacitats 2/2/3/4 i reserves que poden encaixar exactament
+    ;; en dies amb solapaments, de manera que hi ha una solucio amb cost 0.
 
-    ;; Reservas con diferentes necesidades de personas
+    ;; Habitacions (capacitats)
+    (= (capacitat h1) 2)
+    (= (capacitat h2) 2)
+    (= (capacitat h3) 3)
+    (= (capacitat h4) 4)
+
+    ;; Reserves (persones)
     (= (persones r1) 2)
     (= (persones r2) 3)
-    (= (persones r3) 2)
-    (= (persones r4) 4)
+    (= (persones r3) 4)
+    (= (persones r4) 2)
     (= (persones r5) 2)
 
-    ;; Configuración de días de reserva
-    ;; r1: días 1-2 (2 personas)
+    ;; Dies de reserva
+    ;; d1-d2: r1(2) + r2(3) + r3(4) se solapen => han d'ocupar 3 habitacions alhora.
+    ;; La solucio de cost 0 es: r1->cap2, r2->cap3, r3->cap4.
     (dia-reserva r1 d1)
     (dia-reserva r1 d2)
 
-    ;; r2: días 2-3 (3 personas)
+    (dia-reserva r2 d1)
     (dia-reserva r2 d2)
-    (dia-reserva r2 d3)
 
-    ;; r3: días 1-3 (2 personas) - solapa con r1 y r2
     (dia-reserva r3 d1)
     (dia-reserva r3 d2)
-    (dia-reserva r3 d3)
 
-    ;; r4: días 3-5 (4 personas)
+    ;; d3-d4: dues reserves petites (2) se solapen i encaixen exactament a les dues cap2.
     (dia-reserva r4 d3)
     (dia-reserva r4 d4)
-    (dia-reserva r4 d5)
 
-    ;; r5: días 1-2 (2 personas) - solapa con r1 y r3
-    (dia-reserva r5 d1)
-    (dia-reserva r5 d2)
+    (dia-reserva r5 d3)
+    (dia-reserva r5 d4)
   )
 
   (:goal
