@@ -1,0 +1,85 @@
+(define (problem reserves-hotel-ext4-auto-11)
+  (:domain reserves-hotel-ext4)
+
+  (:objects
+    h1 h2 h3 h4 h5 h6 - habitacio
+    r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 - reserva
+    d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 - dia
+  )
+
+  (:init
+    (= (total-cost) 0)
+
+    (= (capacitat h1) 4)
+    (= (capacitat h2) 4)
+    (= (capacitat h3) 3)
+    (= (capacitat h4) 4)
+    (= (capacitat h5) 2)
+    (= (capacitat h6) 2)
+
+    (= (persones r1) 4)
+    (= (persones r2) 2)
+    (= (persones r3) 1)
+    (= (persones r4) 3)
+    (= (persones r5) 1)
+    (= (persones r6) 4)
+    (= (persones r7) 4)
+    (= (persones r8) 3)
+    (= (persones r9) 3)
+    (= (persones r10) 1)
+    (= (persones r11) 3)
+
+    ;; Cada reserva ocupa els dies indicats.
+    ;; Convencio: [inici, fi) (el dia de fi NO s'ocupa).
+    (dia-reserva r1 d7)
+    (dia-reserva r1 d8)
+    (dia-reserva r1 d9)
+    (dia-reserva r1 d10)
+    (dia-reserva r1 d11)
+    (dia-reserva r2 d20)
+    (dia-reserva r2 d21)
+    (dia-reserva r2 d22)
+    (dia-reserva r2 d23)
+    (dia-reserva r3 d1)
+    (dia-reserva r3 d2)
+    (dia-reserva r3 d3)
+    (dia-reserva r3 d4)
+    (dia-reserva r4 d4)
+    (dia-reserva r4 d5)
+    (dia-reserva r4 d6)
+    (dia-reserva r5 d28)
+    (dia-reserva r6 d5)
+    (dia-reserva r6 d6)
+    (dia-reserva r6 d7)
+    (dia-reserva r7 d26)
+    (dia-reserva r7 d27)
+    (dia-reserva r8 d27)
+    (dia-reserva r9 d15)
+    (dia-reserva r9 d16)
+    (dia-reserva r9 d17)
+    (dia-reserva r10 d15)
+    (dia-reserva r10 d16)
+    (dia-reserva r10 d17)
+    (dia-reserva r10 d18)
+    (dia-reserva r10 d19)
+    (dia-reserva r11 d13)
+  )
+
+  (:goal
+    (and
+      (or (servida r1) (rebutjada r1))
+      (or (servida r2) (rebutjada r2))
+      (or (servida r3) (rebutjada r3))
+      (or (servida r4) (rebutjada r4))
+      (or (servida r5) (rebutjada r5))
+      (or (servida r6) (rebutjada r6))
+      (or (servida r7) (rebutjada r7))
+      (or (servida r8) (rebutjada r8))
+      (or (servida r9) (rebutjada r9))
+      (or (servida r10) (rebutjada r10))
+      (or (servida r11) (rebutjada r11))
+    )
+  )
+
+  (:metric minimize (total-cost))
+)
